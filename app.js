@@ -50,7 +50,7 @@ app.use(function (err, req, res, next) {
     }
 })
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8080
 app.listen(port, ()=>{
     console.log("A node js api is start server !")
 })
