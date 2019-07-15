@@ -4,7 +4,10 @@ const formidable = require('formidable')
 const fs = require('fs')
 
 exports.userById = (req, res, next, id) => {
-    User.findById(id).exec((err, user) => {
+    User.findById(id)
+    .populate('following', 'id name')
+    .populate('followers', 'id name')
+    .exec((err, user) => {
         if (err || !user) {
          return res.status(400).json({
              error: 'User not found'
@@ -40,22 +43,6 @@ exports.getUser = (req, res) => {
     req.profile.salt = undefined
     return res.json( req.profile )
 }
-
-// exports.updateUser = (req, res, next) => {
-//     let user = req.profile
-//     user = _.extend(user, req.body)
-//     user.updated = Date.now()
-//     user.save((err) => {
-//         if(err) {
-//             return res.status(400).json({
-//                 error: "You are not authorized to perform this action"
-//             })
-//         }
-//         user.hashed_password = undefined
-//         user.salt = undefined
-//         res.json({user})
-//     })
-// }
 
 exports.updateUser = (req, res, next) => {
     let form = new formidable.IncomingForm()
@@ -106,4 +93,27 @@ exports.userPhoto = (req, res, next) => {
         return res.send(req.profile.photo.data)
     }
     next()
+}
+
+exports.addFollowing = (req, res, next) => {
+    User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}, (err, result) => {
+        if(err) {
+            return res.status(400).json({ error: err })
+        }
+        next()
+    })
+}
+
+exports.addFollower = (req, res, next) => {
+    User.findByIdAndUpdate(req.body.userId, {$push: {followers: req.body.followId}}, {new: true})
+    .populate('following', '_id name')
+    .populate('followers', '_id name')
+    .exec((err, result) => {
+        if(err) {
+            return res.status(400).json({
+                error: err
+            })
+        }
+        result.hashed_password
+    })
 }
