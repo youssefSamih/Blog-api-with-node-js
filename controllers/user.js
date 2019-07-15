@@ -139,6 +139,8 @@ exports.removeFollower = (req, res, next) => {
                 error: err
             })
         }
-        result.hashed_password
+        result.hashed_password = undefined
+        result.salt = undefined
+        res.json(result)
     })
 }
