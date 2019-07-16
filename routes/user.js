@@ -11,7 +11,7 @@ router.get("/user/:userId", requireSingin, getUser)
 router.put("/user/:userId", requireSingin, updateUser)
 router.delete("/user/:userId", requireSingin, deleteUser)
 router.get("/user/photo/:userId", userPhoto)
-router.get('user/findpeople/:userId', requireSingin, findPeople)
+router.get('/user/findpeople/:userId', requireSingin, findPeople)
 
 router.param("userId", userById)
 
