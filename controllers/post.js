@@ -53,12 +53,6 @@ exports.createPost = (req, res) => {
             res.json(result)
         })
     })
-    // const post = new Post(req.body)
-    // post.save().then(result => {
-    //     res.json({
-    //         post: result
-    //     })
-    // })
 }
 
 
