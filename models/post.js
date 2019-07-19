@@ -3,9 +3,7 @@ const { ObjectId } = mongoose.Schema
 const postSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
-        minlength: 4,
-        maxlength: 150
+        required: true
     },
     body: {
         type: String,
@@ -13,7 +11,7 @@ const postSchema = new mongoose.Schema({
     },
     photo: {
         data: Buffer,
-        contentType: String
+        contenType: String
     },
     postedBy: {
         type: ObjectId,
@@ -24,7 +22,7 @@ const postSchema = new mongoose.Schema({
         default: Date.now
     },
     updated: Date,
-    likes: [{type: ObjectId, ref: "User" }]
+    likes: [{ type: ObjectId, ref: "User" }],
 })
 
 module.exports = mongoose.model("Post", postSchema)

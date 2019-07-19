@@ -147,7 +147,11 @@ exports.updatePost = (req, res, next) => {
 }
 
 exports.like = (req, res) => {
-    Post.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, {new: true}).then((err, result) => {
+    Post.findByIdAndUpdate(
+            req.body.postId,
+            {$push: {likes: req.body.userId}},
+            {new: true}
+        ).exec((err, result) => {
         if(err) {
             return res.status(400).json({
                 error: err
@@ -159,7 +163,7 @@ exports.like = (req, res) => {
 }
 
 exports.unlike = (req, res) => {
-    Post.findByIdAndUpdate(req.body.postId, {$pull: {likes: req.body.userId}}, {new: true}).then((err, result) => {
+    Post.findByIdAndUpdate(req.body.postId, {$pull: {likes: req.body.userId}}, {new: true}).exec((err, result) => {
         if(err) {
             return res.status(400).json({
                 error: err

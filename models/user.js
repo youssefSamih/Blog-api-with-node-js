@@ -16,12 +16,12 @@ const userSchema = new mongoose.Schema({
     },
     hashed_password: {
         type: String,
-        required: true,
+        required: true
     },
     salt: String,
     created: {
         type: Date,
-        default: Date.now,
+        default: Date.now
     },
     updated: Date,
     photo: {
@@ -32,8 +32,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    following: [{type: ObjectId, ref: "User" }],
-    followers: [{type: ObjectId, ref: "User" }],
+    following: [{ type: ObjectId, ref: "User" }],
+    followers: [{ type: ObjectId, ref: "User" }],
 })
 
 userSchema.virtual('password')
