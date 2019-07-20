@@ -23,6 +23,13 @@ const postSchema = new mongoose.Schema({
     },
     updated: Date,
     likes: [{ type: ObjectId, ref: "User" }],
+    comments: [
+        {
+            text: String,
+            created: {type: DataCue, default: Date.now},
+            postedBy: {type: ObjectId, ref: 'User'}
+        }
+    ]
 })
 
 module.exports = mongoose.model("Post", postSchema)

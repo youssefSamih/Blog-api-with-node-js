@@ -6,6 +6,8 @@ const fs = require('fs')
 exports.postById = (req, res, next, id) => {
     Post.findById(id)
         .populate("postedBy", "_id name")
+        .populate("comments", "text created")
+        .populate("comments.postedBy", "_id name")
         .exec((err, post) => {
             if(err || !post) {
                 return res.status(400).json({
@@ -173,3 +175,45 @@ exports.unlike = (req, res) => {
         }
     })
 }
+
+exports.comment = (req, res) => {
+    let comment = req.body.comment
+    comment.postedBy = req.body.userId
+
+    Post.findByIdAndUpdate(
+        req.body.postId,
+        {$push: {comments: comment}},
+        {new: true}
+    )
+    .populate('comments.postedBy', 'id name')
+    .populate('postedBy', 'id name')
+    .exec((err, result) => {
+    if(err) {
+        return res.status(400).json({
+            error: err
+        })
+    } else {
+        res.json(result)
+    }
+})}
+
+
+exports.uncomment = (req, res) => {
+    let comment = req.body.comment
+
+    Post.findByIdAndUpdate(
+        req.body.postId,
+        {$pull: {comments: {id: comment._id}}},
+        {new: true}
+    )
+    .populate('comments.postedBy', 'id name')
+    .populate('postedBy', 'id name')
+    .exec((err, result) => {
+    if(err) {
+        return res.status(400).json({
+            error: err
+        })
+    } else {
+        res.json(result)
+    }
+})}
