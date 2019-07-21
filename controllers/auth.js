@@ -94,7 +94,7 @@ exports.resetPassword = (req, res) => {
             })
         
         const updateFields = {
-            Password: newPassword,
+            password: newPassword,
             resetPasswordLink: ""
         }
 
