@@ -1,5 +1,5 @@
 const express = require("express")
-const { signup, sigin, signout, forgotPassword, resetPassword } = require("../controllers/auth")
+const { signup, sigin, signout, forgotPassword, resetPassword, socialLogin } = require("../controllers/auth")
 const { userById } = require("../controllers/user")
 const { userSignupValidator } = require('../validator')
 
@@ -11,6 +11,8 @@ router.get("/signout", signout)
 
 router.put("/forgot-password", forgotPassword)
 router.put("/reset-password", resetPassword)
+
+router.post("/social-login", socialLogin)
 
 router.param("userId", userById)
 
