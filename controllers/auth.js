@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const expressJwt = require("express-jwt")
 const User = require('../models/user')
+const _ = require("lodash")
+const { sendEmail } = require('../helpers')
+const dotenv = require("dotenv")
+dotenv.config()
 
 exports.signup = async (req, res) => {
     const userExists = await User.findOne({email: req.body.email})
@@ -42,3 +46,70 @@ exports.requireSingin = expressJwt({
     secret: process.env.JWT_SECRET,
     userProperty: "auth"
 })
+
+exports.forgotPassword = (req, res) => {
+    if(!req.body) return res.status(400).json({message: "No request body"})
+    if(!req.body.email)
+        return res.status(400).json({message: "No Email in request body"})
+
+    console.log("forgot password finding user with that email")
+    const {email} = req.body
+    console.log("signin req.body", email)
+    User.findOne({email}, (err, user) => {
+        if(err || !user) 
+            return res.status("401").json({error: "User with that email does not exist !"})
+        const token = jwt.sign(
+            {_id: user._id, iss: "NODEAPI"},
+            process.env.JWT_SECRET
+        )
+
+        const emailData = {
+            from : "noreply@nodereact.com",
+            to: email,
+            subject: "Password Reset Instruction",
+            text: `<p>Please use the following link to reset your password: ${
+                process.env.CLIENT_URL
+            }/reset-password/${token}<p>`
+        }
+
+        return user.updateOne({ resetPasswordLink: token }, (err, success) => {
+            if(err) {
+                return res.json({message : err})
+            } else {
+                sendEmail(emailData)
+                return res.status(200).json({
+                    message: `Email has been sent to ${email}. Follow the instructions to reset ypur Password`
+                })
+            }
+        })
+    })
+}
+
+exports.resetPassword = (req, res) => {
+    const { resetPasswordLink, newPassword } = req.body
+    User.findOne({resetPasswordLink}, (err, user) => {
+        if(err || !user)
+            return res.status(401).json({
+                error: "Invalid Link !"
+            })
+        
+        const updateFields = {
+            Password: newPassword,
+            resetPasswordLink: ""
+        }
+
+        user = _.extend(user, updateFields)
+        user.updated = Date.now()
+
+        user.save((err, result) => {
+            if(err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+            res.json({
+                message: `Great! Now you can login with your new password`
+            })
+        })
+    })
+}
