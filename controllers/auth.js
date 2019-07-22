@@ -123,7 +123,7 @@ exports.socialLogin = (req, res) => {
             const token = jwt.sign({id: user._id, iss:"NODEAPI"}, process.env.JWT_SECRET)
             res.cookie("t", token, {expire: new Date() + 9999})
             const {_id, name, email} = user
-            return res.json({token, user: {_id, name, email}})
+            return res.json({token, user: {_id, name, email, role}})
         } else {
             req.profile = user
             user = _.extend(user, req.body)
@@ -131,8 +131,8 @@ exports.socialLogin = (req, res) => {
             user.save()
             const token = jwt.sign({_id: user._id, iss: "NODEAPI"}, process.env.JWT_SECRET)
             res.cookie("t", token, {expire: new Date() + 9999})
-            const {_id, name, email} = user
-            return res.json({token, user: {_id, name, email }})
+            const {_id, name, email, role} = user
+            return res.json({token, user: {_id, name, email, role }})
         }
     })
 }
